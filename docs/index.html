@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify MCP Server - Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --white:      #ffffff;
+            --black:      #202124;
+            --blue:       #1a73e8;
+            --blue-dark:  #1557b0;
+            --blue-light: #e8f0fe;
+            --gray-50:    #f8f9fa;
+            --gray-100:   #f1f3f4;
+            --gray-200:   #e8eaed;
+            --gray-300:   #dadce0;
+            --gray-500:   #80868b;
+            --gray-600:   #5f6368;
+            --gray-700:   #3c4043;
+            --green:      #34a853;
+            --nav-h:      64px;
+            --sidebar-w:  256px;
+            --content-max: 900px;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--black);
+            background: var(--white);
+        }
+
+        /* TOP NAV */
+        .top-nav {
+            position: sticky; top: 0; z-index: 100;
+            height: var(--nav-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-300);
+            display: flex; align-items: center;
+            padding: 0 24px; gap: 16px;
+        }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .nav-logo-icon {
+            width: 32px; height: 32px;
+            background: var(--blue); border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .nav-logo-text {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 18px; font-weight: 500; color: var(--black); white-space: nowrap;
+        }
+        .nav-logo-text span { color: var(--blue); }
+        .nav-divider { width: 1px; height: 24px; background: var(--gray-300); flex-shrink: 0; }
+        .nav-product {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 15px; font-weight: 400; color: var(--gray-600);
+        }
+        .nav-links { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+        .nav-link {
+            padding: 8px 14px; border-radius: 4px; text-decoration: none;
+            font-size: 13px; font-weight: 500; color: var(--gray-700);
+            transition: background .15s, color .15s;
+        }
+        .nav-link:hover { background: var(--gray-100); color: var(--blue); }
+        .nav-link.primary { background: var(--blue); color: var(--white); }
+        .nav-link.primary:hover { background: var(--blue-dark); color: var(--white); }
+
+        /* LAYOUT */
+        .page-layout { display: flex; min-height: calc(100vh - var(--nav-h)); }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-w); flex-shrink: 0;
+            background: var(--gray-50);
+            border-right: 1px solid var(--gray-300);
+            padding: 24px 0;
+            position: sticky; top: var(--nav-h);
+            height: calc(100vh - var(--nav-h));
+            overflow-y: auto;
+        }
+        .sidebar-section { margin-bottom: 8px; }
+        .sidebar-section-header {
+            padding: 8px 24px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: .8px; text-transform: uppercase; color: var(--gray-500);
+        }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 24px; font-size: 13px; color: var(--gray-700);
+            text-decoration: none;
+            transition: background .1s, color .1s;
+            border-right: 3px solid transparent;
+        }
+        .sidebar-link:hover { background: var(--gray-200); color: var(--blue); }
+        .sidebar-link.active {
+            background: var(--blue-light); color: var(--blue);
+            border-right-color: var(--blue); font-weight: 500;
+        }
+        .sidebar-link .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor; flex-shrink: 0;
+        }
+
+        /* MAIN */
+        .main-content { flex: 1; min-width: 0; padding: 32px 48px 64px; }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; color: var(--gray-600);
+            margin-bottom: 28px; flex-wrap: wrap;
+        }
+        .breadcrumb a { color: var(--blue); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb-sep { color: var(--gray-300); font-size: 16px; }
+
+        /* Page title */
+        .page-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 32px; font-weight: 400; color: var(--black);
+            line-height: 1.25; margin-bottom: 12px;
+        }
+        .page-subtitle {
+            font-size: 16px; color: var(--gray-600);
+            margin-bottom: 24px; max-width: 660px;
+        }
+
+        /* Badges */
+        .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
+        .badges img { height: 20px; }
+
+        /* Sections */
+        .section { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--gray-200); }
+        .section:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+        .section-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 22px; font-weight: 400; color: var(--black);
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-title::after {
+            content: ''; flex: 1; height: 1px; background: var(--gray-200);
+        }
+        .section-body { color: var(--gray-700); font-size: 14px; line-height: 1.75; max-width: var(--content-max); }
+
+        /* Buttons */
+        .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 22px; border-radius: 4px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px; font-weight: 500; text-decoration: none;
+            transition: box-shadow .15s, background .15s;
+        }
+        .btn-blue { background: var(--blue); color: var(--white); border: 1px solid var(--blue); }
+        .btn-blue:hover { background: var(--blue-dark); box-shadow: 0 1px 4px rgba(26,115,232,.4); }
+        .btn-outline { background: var(--white); color: var(--blue); border: 1px solid var(--blue); }
+        .btn-outline:hover { background: var(--blue-light); }
+
+        /* Feature grid */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; margin-top: 20px; }
+        .feature-card {
+            background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px;
+            padding: 20px; transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(26,115,232,.15); }
+        .feature-card-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+        .feature-card h3 {
+            font-family: 'Google Sans', sans-serif; font-size: 14px;
+            font-weight: 500; color: var(--blue); margin-bottom: 6px;
+        }
+        .feature-card p { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+
+        /* Tools table */
+        .tools-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+        .tools-table th {
+            text-align: left; padding: 10px 16px;
+            background: var(--gray-50); border-bottom: 2px solid var(--gray-300);
+            font-family: 'Google Sans', sans-serif; font-weight: 500; color: var(--gray-700);
+        }
+        .tools-table td { padding: 10px 16px; border-bottom: 1px solid var(--gray-200); color: var(--gray-700); }
+        .tools-table tr:last-child td { border-bottom: none; }
+        .tools-table tr:hover td { background: var(--gray-50); }
+        .tool-name {
+            font-family: 'Roboto Mono', monospace; font-size: 12px;
+            color: var(--blue-dark); background: var(--blue-light);
+            padding: 2px 8px; border-radius: 3px; white-space: nowrap;
+        }
+
+        /* Code block */
+        .code-block {
+            background: var(--gray-100); border: 1px solid var(--gray-300);
+            border-radius: 6px; padding: 16px 20px; margin: 14px 0; overflow-x: auto;
+        }
+        .code-block pre {
+            font-family: 'Roboto Mono', monospace; font-size: 12.5px;
+            color: var(--gray-700); line-height: 1.7; white-space: pre;
+        }
+        .cm  { color: var(--gray-500); }   /* comment */
+        .ck  { color: var(--blue-dark); }  /* key */
+        .cv  { color: var(--green); }      /* value */
+
+        /* Inline code */
+        code {
+            font-family: 'Roboto Mono', monospace; font-size: 12px;
+            background: var(--gray-100); border: 1px solid var(--gray-300);
+            border-radius: 3px; padding: 1px 6px; color: var(--gray-700);
+        }
+
+        /* Callout */
+        .callout {
+            display: flex; gap: 14px; padding: 16px 20px;
+            border-radius: 6px; border-left: 4px solid;
+            margin: 20px 0; font-size: 13px; line-height: 1.6;
+        }
+        .callout-info { background: var(--blue-light); border-color: var(--blue); color: var(--blue-dark); }
+        .callout-success { background: #e6f4ea; border-color: var(--green); color: #137333; }
+        .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 16px; margin-top: 16px; }
+        .stat-card {
+            background: var(--white); border: 1px solid var(--gray-300);
+            border-radius: 8px; padding: 20px 16px; text-align: center;
+        }
+        .stat-number {
+            font-family: 'Google Sans', sans-serif; font-size: 26px;
+            font-weight: 400; color: var(--blue); line-height: 1; margin-bottom: 6px;
+        }
+        .stat-label { font-size: 12px; color: var(--gray-600); line-height: 1.3; }
+
+        /* Links */
+        a { color: var(--blue); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Doc cards */
+        .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 12px; margin-top: 16px; }
+        .doc-link-card {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 16px; border: 1px solid var(--gray-300); border-radius: 6px;
+            text-decoration: none; color: inherit;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .doc-link-card:hover { border-color: var(--blue); box-shadow: 0 2px 6px rgba(26,115,232,.12); text-decoration: none; }
+        .doc-link-card-icon { font-size: 20px; flex-shrink: 0; }
+        .doc-link-card h4 {
+            font-family: 'Google Sans', sans-serif; font-size: 13px;
+            font-weight: 500; color: var(--blue); margin-bottom: 3px;
+        }
+        .doc-link-card p { font-size: 12px; color: var(--gray-600); line-height: 1.4; }
+
+        /* Quick start steps */
+        .steps { counter-reset: step; list-style: none; margin-top: 16px; }
+        .step { display: flex; gap: 16px; margin-bottom: 24px; counter-increment: step; }
+        .step::before {
+            content: counter(step);
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--blue); color: var(--white);
+            font-family: 'Google Sans', sans-serif; font-size: 13px; font-weight: 500;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 1px;
+        }
+        .step-content h4 {
+            font-family: 'Google Sans', sans-serif; font-size: 14px;
+            font-weight: 500; color: var(--black); margin-bottom: 4px;
+        }
+        .step-content p { font-size: 13px; color: var(--gray-600); }
+
+        /* FOOTER */
+        footer {
+            background: var(--gray-50); border-top: 1px solid var(--gray-300);
+            padding: 24px 48px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+        }
+        .footer-left { font-size: 13px; color: var(--gray-600); }
+        .footer-links { display: flex; gap: 20px; font-size: 12px; }
+        .footer-links a { color: var(--gray-600); }
+        .footer-links a:hover { color: var(--blue); }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { padding: 24px 20px 48px; }
+            footer { padding: 20px; }
+        }
+        @media (max-width: 600px) {
+            .page-title { font-size: 24px; }
+            .nav-product { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+    <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">🎵</div>
+        <span class="nav-logo-text">Spotify <span>MCP</span></span>
+    </a>
+    <div class="nav-divider"></div>
+    <span class="nav-product">Documentation</span>
+    <div class="nav-links">
+        <a href="https://github.com/yennanliu/SpotifyMCP2" class="nav-link">GitHub</a>
+        <a href="https://github.com/yennanliu/SpotifyMCP2/issues" class="nav-link">Issues</a>
+        <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md" class="nav-link primary">Get Started</a>
+    </div>
+</nav>
+
+<!-- PAGE LAYOUT -->
+<div class="page-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-header">Overview</div>
+            <a href="#overview"  class="sidebar-link active"><span class="dot"></span>Introduction</a>
+            <a href="#features"  class="sidebar-link"><span class="dot"></span>Features</a>
+            <a href="#stats"     class="sidebar-link"><span class="dot"></span>Project Stats</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-header">Quick Start</div>
+            <a href="#quickstart" class="sidebar-link"><span class="dot"></span>Installation</a>
+            <a href="#config"     class="sidebar-link"><span class="dot"></span>Configuration</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-header">API Reference</div>
+            <a href="#tools"       class="sidebar-link"><span class="dot"></span>MCP Tools</a>
+            <a href="#development" class="sidebar-link"><span class="dot"></span>Development</a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-header">Resources</div>
+            <a href="#docs"  class="sidebar-link"><span class="dot"></span>Documentation</a>
+            <a href="#links" class="sidebar-link"><span class="dot"></span>Links</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="breadcrumb">
+            <a href="https://github.com/yennanliu">Home</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="https://github.com/yennanliu/SpotifyMCP2">SpotifyMCP2</a>
+            <span class="breadcrumb-sep">/</span>
+            <span>Documentation</span>
+        </nav>
+
+        <!-- OVERVIEW -->
+        <div id="overview">
+            <h1 class="page-title">Spotify MCP Server</h1>
+            <p class="page-subtitle">
+                Control Spotify from Claude Desktop using the
+                <a href="https://modelcontextprotocol.io">Model Context Protocol</a>.
+                Search tracks, manage playback, and handle playlists — all through natural language.
+            </p>
+            <div class="badges">
+                <img src="https://github.com/yennanliu/SpotifyMCP2/actions/workflows/ci.yml/badge.svg" alt="CI">
+                <img src="https://github.com/yennanliu/SpotifyMCP2/actions/workflows/codeql.yml/badge.svg" alt="CodeQL">
+                <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT">
+                <img src="https://img.shields.io/badge/node-%3E%3D18.0.0-blue" alt="Node.js">
+                <img src="https://img.shields.io/badge/TypeScript-5.4.3-blue" alt="TypeScript">
+            </div>
+            <div class="btn-row">
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md" class="btn btn-blue">&#9654; Get Started</a>
+                <a href="https://github.com/yennanliu/SpotifyMCP2" class="btn btn-outline">View on GitHub</a>
+            </div>
+            <div class="callout callout-info">
+                <span class="callout-icon">&#8505;</span>
+                <span>
+                    This server implements the
+                    <a href="https://modelcontextprotocol.io">Model Context Protocol (MCP)</a>,
+                    allowing Claude Desktop to interact with the Spotify Web API through a secure OAuth 2.0 flow.
+                </span>
+            </div>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="section" id="features">
+            <h2 class="section-title">Features</h2>
+            <p class="section-body">Eight tools covering the full Spotify playback lifecycle.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-card-icon">&#128269;</span>
+                    <h3>Search Tracks</h3>
+                    <p>Query Spotify's entire catalog by track name, artist, album, or keywords.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-card-icon">&#9654;&#65039;</span>
+                    <h3>Playback Control</h3>
+                    <p>Play, pause, skip, seek, and set volume from Claude Desktop.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-card-icon">&#128203;</span>
+                    <h3>Playlist Management</h3>
+                    <p>List your playlists and browse their tracks without leaving the chat.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-card-icon">&#128241;</span>
+                    <h3>Device Control</h3>
+                    <p>Discover and switch between all active Spotify-connected devices.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-card-icon">&#128274;</span>
+                    <h3>OAuth 2.0 Auth</h3>
+                    <p>Secure authentication using Spotify's official authorization code flow.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-card-icon">&#9989;</span>
+                    <h3>95%+ Test Coverage</h3>
+                    <p>113 tests across Node 18, 20 &amp; 22 on Linux, macOS, and Windows.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK START -->
+        <div class="section" id="quickstart">
+            <h2 class="section-title">Quick Start</h2>
+            <ol class="steps">
+                <li class="step">
+                    <div class="step-content">
+                        <h4>Create a Spotify Developer App</h4>
+                        <p>Go to <a href="https://developer.spotify.com/dashboard">developer.spotify.com/dashboard</a>,
+                           create an app, and save your Client ID and Client Secret.</p>
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-content">
+                        <h4>Clone the repo and generate a Refresh Token</h4>
+                        <div class="code-block"><pre><span class="cm"># Clone the repo</span>
+git clone https://github.com/yennanliu/SpotifyMCP2.git
+cd SpotifyMCP2
+
+<span class="cm"># Install dependencies and run the token generator</span>
+npm install
+node get-refresh-token.js</pre></div>
+                    </div>
+                </li>
+                <li class="step" id="config">
+                    <div class="step-content">
+                        <h4>Configure Claude Desktop</h4>
+                        <p>Add the server to your <code>claude_desktop_config.json</code>:</p>
+                        <div class="code-block"><pre>{
+  <span class="ck">"mcpServers"</span>: {
+    <span class="ck">"spotify"</span>: {
+      <span class="ck">"command"</span>: <span class="cv">"node"</span>,
+      <span class="ck">"args"</span>: [<span class="cv">"/path/to/SpotifyMCP2/dist/index.js"</span>],
+      <span class="ck">"env"</span>: {
+        <span class="ck">"SPOTIFY_CLIENT_ID"</span>:     <span class="cv">"your_client_id"</span>,
+        <span class="ck">"SPOTIFY_CLIENT_SECRET"</span>: <span class="cv">"your_client_secret"</span>,
+        <span class="ck">"SPOTIFY_REFRESH_TOKEN"</span>: <span class="cv">"your_refresh_token"</span>
+      }
+    }
+  }
+}</pre></div>
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-content">
+                        <h4>Restart Claude Desktop &amp; start using Spotify</h4>
+                        <p>Fully quit and reopen Claude Desktop. Try: <em>"Play some jazz"</em>, <em>"Pause the music"</em>, or <em>"Show my playlists"</em>.</p>
+                    </div>
+                </li>
+            </ol>
+            <div class="callout callout-success">
+                <span class="callout-icon">&#10003;</span>
+                <span>Full walkthrough in the
+                    <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md">Claude Desktop Setup Guide</a>.
+                </span>
+            </div>
+        </div>
+
+        <!-- MCP TOOLS -->
+        <div class="section" id="tools">
+            <h2 class="section-title">MCP Tools Reference</h2>
+            <p class="section-body">Eight tools are registered with the MCP server.</p>
+            <table class="tools-table">
+                <thead>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Description</th>
+                        <th>Key Parameters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="tool-name">search_tracks</span></td><td>Search Spotify catalog</td><td><code>query</code>, <code>limit</code></td></tr>
+                    <tr><td><span class="tool-name">play_track</span></td><td>Play a specific track by URI</td><td><code>uri</code>, <code>device_id</code></td></tr>
+                    <tr><td><span class="tool-name">playback_control</span></td><td>Play, pause, next, previous, seek, volume</td><td><code>action</code>, <code>value</code></td></tr>
+                    <tr><td><span class="tool-name">get_current_playback</span></td><td>Get current playback state</td><td>—</td></tr>
+                    <tr><td><span class="tool-name">get_user_playlists</span></td><td>List current user's playlists</td><td><code>limit</code>, <code>offset</code></td></tr>
+                    <tr><td><span class="tool-name">get_playlist_tracks</span></td><td>Get tracks in a playlist</td><td><code>playlist_id</code></td></tr>
+                    <tr><td><span class="tool-name">add_to_queue</span></td><td>Add a track to the playback queue</td><td><code>uri</code></td></tr>
+                    <tr><td><span class="tool-name">get_available_devices</span></td><td>List all active Spotify devices</td><td>—</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- DEVELOPMENT -->
+        <div class="section" id="development">
+            <h2 class="section-title">Development</h2>
+            <div class="code-block"><pre><span class="cm"># Install dependencies</span>
+npm install
+
+<span class="cm"># Compile TypeScript</span>
+npm run build
+
+<span class="cm"># Run all tests</span>
+npm test
+
+<span class="cm"># Run integration tests</span>
+npm run test:integration
+
+<span class="cm"># Start MCP server</span>
+npm run start:mcp</pre></div>
+        </div>
+
+        <!-- STATS -->
+        <div class="section" id="stats">
+            <h2 class="section-title">Project Stats</h2>
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-number">1,442</div><div class="stat-label">Lines of production code</div></div>
+                <div class="stat-card"><div class="stat-number">1,013</div><div class="stat-label">Lines of test code</div></div>
+                <div class="stat-card"><div class="stat-number">113</div><div class="stat-label">Passing tests</div></div>
+                <div class="stat-card"><div class="stat-number">8</div><div class="stat-label">MCP tools</div></div>
+                <div class="stat-card"><div class="stat-number">95%+</div><div class="stat-label">Code coverage</div></div>
+                <div class="stat-card"><div class="stat-number">MIT</div><div class="stat-label">Open source license</div></div>
+            </div>
+        </div>
+
+        <!-- DOCUMENTATION -->
+        <div class="section" id="docs">
+            <h2 class="section-title">Documentation</h2>
+            <div class="doc-grid">
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/README.md" class="doc-link-card">
+                    <span class="doc-link-card-icon">&#128216;</span>
+                    <div><h4>README</h4><p>Quick start overview and project introduction</p></div>
+                </a>
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/SETUP.md" class="doc-link-card">
+                    <span class="doc-link-card-icon">&#128295;</span>
+                    <div><h4>SETUP</h4><p>Spotify Developer App configuration guide</p></div>
+                </a>
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md" class="doc-link-card">
+                    <span class="doc-link-card-icon">&#129302;</span>
+                    <div><h4>Claude Desktop Setup</h4><p>Step-by-step MCP integration guide</p></div>
+                </a>
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/ARCHITECTURE.md" class="doc-link-card">
+                    <span class="doc-link-card-icon">&#127959;</span>
+                    <div><h4>Architecture</h4><p>Technical design and module structure</p></div>
+                </a>
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/TESTING_RESULTS.md" class="doc-link-card">
+                    <span class="doc-link-card-icon">&#128202;</span>
+                    <div><h4>Test Results</h4><p>Full test suite and coverage report</p></div>
+                </a>
+                <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CICD.md" class="doc-link-card">
+                    <span class="doc-link-card-icon">&#9881;</span>
+                    <div><h4>CI/CD Pipeline</h4><p>Automated build and deployment details</p></div>
+                </a>
+            </div>
+        </div>
+
+        <!-- LINKS -->
+        <div class="section" id="links">
+            <h2 class="section-title">Links</h2>
+            <p class="section-body">
+                <a href="https://github.com/yennanliu/SpotifyMCP2">GitHub Repository</a> &mdash;
+                <a href="https://github.com/yennanliu/SpotifyMCP2/issues">Report Issues</a> &mdash;
+                <a href="https://github.com/yennanliu/SpotifyMCP2/pulls">Pull Requests</a> &mdash;
+                <a href="https://github.com/yennanliu/SpotifyMCP2/actions">CI/CD Status</a> &mdash;
+                <a href="https://developer.spotify.com/dashboard">Spotify Developer</a> &mdash;
+                <a href="https://modelcontextprotocol.io">MCP Documentation</a>
+            </p>
+        </div>
+
+    </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-left">Built with Model Context Protocol &mdash; &copy; 2026 Spotify MCP Server</div>
+    <div class="footer-links">
+        <a href="https://github.com/yennanliu/SpotifyMCP2">GitHub</a>
+        <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/LICENSE">MIT License</a>
+        <a href="https://modelcontextprotocol.io">MCP Docs</a>
+        <a href="https://developer.spotify.com">Spotify Dev</a>
+    </div>
+</footer>
+
+<script>
+    const sections = document.querySelectorAll('[id]');
+    const links    = document.querySelectorAll('.sidebar-link');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                links.forEach(l => l.classList.remove('active'));
+                const a = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+                if (a) a.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

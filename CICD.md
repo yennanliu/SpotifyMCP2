@@ -113,6 +113,56 @@ git push origin v1.0.1
 - Blocks GPL-3.0 and AGPL-3.0 licenses
 - Comments summary in PR
 
+### 5. GitHub Pages Deployment (`.github/workflows/pages.yml`)
+
+**Trigger:**
+- Push to `main` branch
+- Manual workflow dispatch
+
+**Purpose:** Deploy project documentation to GitHub Pages.
+
+#### Features
+- **Automated Deployment**: Builds and deploys on every push to main
+- **Beautiful Documentation Site**: Professional landing page with all project info
+- **Live Site**: Accessible at `https://yennanliu.github.io/SpotifyMCP2/`
+
+#### Build Process
+1. Checkout code
+2. Generate HTML documentation site
+3. Configure GitHub Pages
+4. Upload artifact
+5. Deploy to Pages
+
+#### Documentation Site Includes
+- **Project Overview**: Description, badges, and features
+- **Quick Start Guide**: Step-by-step setup instructions
+- **MCP Tools Reference**: All 8 tools documented
+- **Links to Documentation**: README, SETUP, ARCHITECTURE, CI/CD guides
+- **Project Statistics**: Test coverage, code metrics
+- **Development Info**: Build commands, testing instructions
+
+#### Accessing the Site
+
+**Live URL**: https://yennanliu.github.io/SpotifyMCP2/
+
+The site is automatically updated when you push to the main branch.
+
+#### Permissions Required
+
+The Pages workflow needs these permissions (already configured):
+- `contents: read` - Read repository files
+- `pages: write` - Deploy to Pages
+- `id-token: write` - Authenticate deployment
+
+#### Setup GitHub Pages (One-time)
+
+1. Go to repository Settings
+2. Navigate to Pages (left sidebar)
+3. Under "Source", select "GitHub Actions"
+4. Save
+
+The site will deploy automatically after the next push to main.
+
 ## Dependabot
 
 **File:** `.github/dependabot.yml`
@@ -225,6 +275,7 @@ npm run test:integration
 - **Release:** `contents: write` - Create releases
 - **CodeQL:** `security-events: write` - Write security alerts
 - **Dependency Review:** `pull-requests: write` - Comment on PRs
+- **GitHub Pages:** `pages: write`, `id-token: write` - Deploy to Pages
 
 ## Monitoring
 
@@ -313,6 +364,11 @@ npm run test:integration
 - Use self-hosted runners (if needed)
 
 ## Future Enhancements
+
+### Completed
+- [x] **GitHub Pages Documentation** - Live project site
+- [x] Automated deployment on push to main
+- [x] Professional documentation landing page
 
 ### Planned
 - [ ] Automated changelog generation

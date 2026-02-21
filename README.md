@@ -2,11 +2,14 @@
 
 [![CI](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/ci.yml/badge.svg)](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/codeql.yml/badge.svg)](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/codeql.yml)
+[![Pages](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/pages.yml/badge.svg)](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4.3-blue)](https://www.typescriptlang.org/)
 
 A Model Context Protocol (MCP) server that enables Claude to directly control Spotify playback, search tracks, and manage playlists through the Spotify Web API.
+
+**📚 [View Documentation Site](https://yennanliu.github.io/SpotifyMCP2/)**
 
 ## Features
 

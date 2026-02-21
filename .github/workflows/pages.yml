@@ -1,0 +1,372 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Documentation Site
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Create docs directory
+      run: mkdir -p docs
+
+    - name: Generate documentation site
+      run: |
+        cat > docs/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Spotify MCP Server - Documentation</title>
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                }
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                header {
+                    background: white;
+                    border-radius: 10px;
+                    padding: 40px;
+                    margin-bottom: 30px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    text-align: center;
+                }
+                h1 {
+                    color: #1DB954;
+                    font-size: 3em;
+                    margin-bottom: 10px;
+                }
+                .subtitle {
+                    color: #666;
+                    font-size: 1.2em;
+                }
+                .badges {
+                    margin: 20px 0;
+                }
+                .badges img {
+                    margin: 5px;
+                }
+                .grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+                .card {
+                    background: white;
+                    border-radius: 10px;
+                    padding: 30px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    transition: transform 0.3s, box-shadow 0.3s;
+                }
+                .card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                }
+                .card h2 {
+                    color: #1DB954;
+                    margin-bottom: 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                .card ul {
+                    list-style: none;
+                    padding-left: 0;
+                }
+                .card li {
+                    padding: 8px 0;
+                    border-bottom: 1px solid #eee;
+                }
+                .card li:last-child {
+                    border-bottom: none;
+                }
+                .card a {
+                    color: #667eea;
+                    text-decoration: none;
+                    font-weight: 500;
+                }
+                .card a:hover {
+                    color: #764ba2;
+                    text-decoration: underline;
+                }
+                .cta-section {
+                    background: white;
+                    border-radius: 10px;
+                    padding: 40px;
+                    text-align: center;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    margin-bottom: 30px;
+                }
+                .cta-button {
+                    display: inline-block;
+                    background: #1DB954;
+                    color: white;
+                    padding: 15px 40px;
+                    border-radius: 50px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    font-size: 1.1em;
+                    transition: background 0.3s, transform 0.3s;
+                    margin: 10px;
+                }
+                .cta-button:hover {
+                    background: #1ed760;
+                    transform: scale(1.05);
+                }
+                .cta-button.secondary {
+                    background: #667eea;
+                }
+                .cta-button.secondary:hover {
+                    background: #764ba2;
+                }
+                .features {
+                    background: white;
+                    border-radius: 10px;
+                    padding: 30px;
+                    margin-bottom: 30px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                }
+                .features h3 {
+                    color: #333;
+                    margin-bottom: 20px;
+                }
+                .feature-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 15px;
+                }
+                .feature-item {
+                    padding: 15px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border-left: 4px solid #1DB954;
+                }
+                .feature-item strong {
+                    color: #1DB954;
+                }
+                footer {
+                    text-align: center;
+                    color: white;
+                    padding: 20px;
+                    margin-top: 30px;
+                }
+                .icon {
+                    font-size: 1.5em;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <h1>🎵 Spotify MCP Server</h1>
+                    <p class="subtitle">Control Spotify from Claude Desktop using Model Context Protocol</p>
+                    <div class="badges">
+                        <img src="https://github.com/yennanliu/SpotifyMCP2/actions/workflows/ci.yml/badge.svg" alt="CI">
+                        <img src="https://github.com/yennanliu/SpotifyMCP2/actions/workflows/codeql.yml/badge.svg" alt="CodeQL">
+                        <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
+                        <img src="https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen" alt="Node.js">
+                        <img src="https://img.shields.io/badge/TypeScript-5.4.3-blue" alt="TypeScript">
+                    </div>
+                </header>
+
+                <div class="cta-section">
+                    <h2>Get Started</h2>
+                    <p style="margin: 20px 0;">Enable Claude to search songs, control playback, and manage your Spotify playlists</p>
+                    <a href="https://github.com/yennanliu/SpotifyMCP2" class="cta-button">View on GitHub</a>
+                    <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md" class="cta-button secondary">Setup Guide</a>
+                </div>
+
+                <div class="features">
+                    <h3>✨ Features</h3>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <strong>🔍 Search Tracks</strong><br>
+                            Search Spotify's entire catalog
+                        </div>
+                        <div class="feature-item">
+                            <strong>▶️ Playback Control</strong><br>
+                            Play, pause, skip tracks
+                        </div>
+                        <div class="feature-item">
+                            <strong>📋 Playlist Management</strong><br>
+                            View and manage playlists
+                        </div>
+                        <div class="feature-item">
+                            <strong>📱 Device Control</strong><br>
+                            Control playback across devices
+                        </div>
+                        <div class="feature-item">
+                            <strong>🔐 OAuth2 Auth</strong><br>
+                            Secure authentication
+                        </div>
+                        <div class="feature-item">
+                            <strong>🧪 95%+ Coverage</strong><br>
+                            Thoroughly tested
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <h2><span class="icon">📚</span> Documentation</h2>
+                        <ul>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/README.md">README</a> - Quick start guide</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/SETUP.md">SETUP</a> - Spotify Developer setup</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md">CLAUDE SETUP</a> - Claude Desktop integration</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/ARCHITECTURE.md">ARCHITECTURE</a> - Technical design</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CICD.md">CI/CD</a> - Deployment pipeline</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2><span class="icon">🛠️</span> MCP Tools (8)</h2>
+                        <ul>
+                            <li><strong>search_tracks</strong> - Search Spotify catalog</li>
+                            <li><strong>play_track</strong> - Play specific tracks</li>
+                            <li><strong>playback_control</strong> - Control playback</li>
+                            <li><strong>get_current_playback</strong> - Get playback state</li>
+                            <li><strong>get_user_playlists</strong> - List playlists</li>
+                            <li><strong>get_playlist_tracks</strong> - Get playlist tracks</li>
+                            <li><strong>add_to_queue</strong> - Add to queue</li>
+                            <li><strong>get_available_devices</strong> - List devices</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2><span class="icon">🧪</span> Testing</h2>
+                        <ul>
+                            <li><strong>113 Tests</strong> - All passing (100%)</li>
+                            <li><strong>95%+ Coverage</strong> - Core modules</li>
+                            <li><strong>9 Platforms</strong> - Node 18/20/22 × 3 OS</li>
+                            <li><strong>CI/CD</strong> - Automated testing</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/TESTING_RESULTS.md">Test Results</a></li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/TEST_REPORT.md">Coverage Report</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2><span class="icon">🚀</span> Quick Start</h2>
+                        <ul>
+                            <li>1. Create Spotify Developer App</li>
+                            <li>2. Run <code>node get-refresh-token.js</code></li>
+                            <li>3. Configure Claude Desktop</li>
+                            <li>4. Restart Claude Desktop</li>
+                            <li>5. Ask Claude to control Spotify!</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/CLAUDE_SETUP.md">Detailed Setup Guide →</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2><span class="icon">💻</span> Development</h2>
+                        <ul>
+                            <li><code>npm install</code> - Install dependencies</li>
+                            <li><code>npm run build</code> - Build TypeScript</li>
+                            <li><code>npm test</code> - Run tests</li>
+                            <li><code>npm run test:integration</code> - Full test suite</li>
+                            <li><code>npm run start:mcp</code> - Start server</li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2">View Source →</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h2><span class="icon">🔗</span> Links</h2>
+                        <ul>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2">GitHub Repository</a></li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/issues">Report Issues</a></li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/pulls">Pull Requests</a></li>
+                            <li><a href="https://github.com/yennanliu/SpotifyMCP2/actions">CI/CD Status</a></li>
+                            <li><a href="https://developer.spotify.com/dashboard">Spotify Developer</a></li>
+                            <li><a href="https://modelcontextprotocol.io">MCP Documentation</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <h3>📊 Project Stats</h3>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <strong>1,442</strong> lines of production code
+                        </div>
+                        <div class="feature-item">
+                            <strong>1,013</strong> lines of test code
+                        </div>
+                        <div class="feature-item">
+                            <strong>113</strong> passing tests
+                        </div>
+                        <div class="feature-item">
+                            <strong>8</strong> MCP tools
+                        </div>
+                        <div class="feature-item">
+                            <strong>95%+</strong> code coverage
+                        </div>
+                        <div class="feature-item">
+                            <strong>MIT</strong> licensed
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>Built with ❤️ using Model Context Protocol</p>
+                <p>© 2026 Spotify MCP Server | <a href="https://github.com/yennanliu/SpotifyMCP2/blob/main/LICENSE" style="color: white;">MIT License</a></p>
+            </footer>
+        </body>
+        </html>
+        EOF
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'docs'
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

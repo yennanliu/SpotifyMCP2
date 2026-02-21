@@ -4,6 +4,39 @@ This directory contains CI/CD workflows for the Spotify MCP Server project.
 
 ## Workflows
 
+### 📄 GitHub Pages Deployment (`pages.yml`)
+
+Deploys project documentation to GitHub Pages.
+
+**Triggers:**
+- Every push to `main`
+- Manual workflow dispatch
+
+**Purpose:**
+- Hosts a beautiful documentation site at https://yennanliu.github.io/SpotifyMCP2/
+- Automatically updates on every push to main
+- Provides easy access to all project documentation
+
+**Features:**
+- Professional landing page with project overview
+- Links to all documentation (README, SETUP, ARCHITECTURE, etc.)
+- Quick start guide
+- MCP tools reference
+- Project statistics and badges
+- Responsive design
+
+**Setup (One-time):**
+1. Go to repository Settings → Pages
+2. Under "Source", select "GitHub Actions"
+3. Save
+
+The site will automatically deploy after the next push to main.
+
+**Permissions:**
+- `contents: read` - Read repository files
+- `pages: write` - Deploy to GitHub Pages
+- `id-token: write` - Authenticate deployment
+
 ### 🔄 CI Workflow (`ci.yml`)
 
 Runs on every push and pull request to `main` and `develop` branches.
@@ -117,6 +150,7 @@ The following badges are displayed in README.md:
 
 - [![CI](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/ci.yml/badge.svg)](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/ci.yml) - CI workflow status
 - [![CodeQL](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/codeql.yml/badge.svg)](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/codeql.yml) - Security scan status
+- [![Pages](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/pages.yml/badge.svg)](https://github.com/yennanliu/SpotifyMCP2/actions/workflows/pages.yml) - GitHub Pages deployment status
 - ![License](https://img.shields.io/badge/License-MIT-yellow.svg) - Project license
 - ![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen) - Node.js version requirement
 - ![TypeScript](https://img.shields.io/badge/TypeScript-5.4.3-blue) - TypeScript version

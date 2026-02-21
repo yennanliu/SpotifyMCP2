@@ -11,4 +11,13 @@ claude --dangerously-skip-permissions
 
 
 # run below prompt
+agnet_team.txt
 ```
+
+## Run
+
+
+## Deployment
+
+
+## Ref

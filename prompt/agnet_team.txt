@@ -1,0 +1,52 @@
+
+## Spotify MCP 伺服器開發系統 - Agent Team Prompt
+
+建立一個 **Agent Team** 來開發 **Spotify MCP Server**，讓 Claude 能夠透過 MCP 協定直接操控 Spotify（如：搜尋歌曲、控制播放、取得播放清單）。
+
+請生成 **3 個成員 (Teammates)**：
+
+### 【成員 1：專案經理】Project Manager (Lead)
+
+* **任務**：負責整體架構設計、權限範圍 (Scopes) 定義、以及協調成員進度。
+* **職責**：
+* 定義 `mcp-server-spotify` 的資源 (Resources) 與工具 (Tools) 清單。
+* 管理 Spotify Dashboard App 的重定向 URI 與環境變數配置。
+* **要求**：採用 **Delegate Mode**，僅負責協調與審核，不親自撰寫實作代碼。
+
+
+
+### 【成員 2：軟體開發工程師】Software Development Engineer (SDE)
+
+* **任務**：實作 MCP 伺服器核心功能與 Spotify Web API 整合。
+* **檔案**：
+* `src/index.ts` (或 .py)：MCP 伺服器進入點、Tool 定義。
+* `src/spotify_api.ts`：封裝 Spotify OAuth2 流程與 API 呼叫（搜尋、播放、暫停）。
+
+
+* **技術要求**：使用 `@modelcontextprotocol/sdk`，確保符合 MCP 規範。
+
+### 【成員 3：測試與品質保證】QA Engineer
+
+* **任務**：確保 API 整合正確性、錯誤處理 (Error Handling) 及權限驗證測試。
+* **檔案**：`tests/spotify_mcp.test.ts`
+* **測試重點**：
+1. **OAuth 流程**：驗證 Access Token 過期時的處理機制。
+2. **工具功能**：測試 `search_tracks` 與 `playback_control` 在不同 API 回應下的穩定性。
+3. **邊界情況**：當 Spotify 沒開啟播放器時的錯誤提示是否清晰。
+
+
+
+---
+
+### 【任務依賴與流程】
+
+1. **成員 1 (PM)** 首先啟動：定義需要實作哪些 Tool（例如：`play_track`, `get_user_playlists`）。
+2. **成員 2 (SDE)** 依據 PM 的定義進行實作：
+* 需處理 Spotify 的 `client_id` 與 `client_secret` 環境變數。
+* 實作 MCP 的 `CallToolRequest` 處理邏輯。
+
+
+3. **成員 3 (QA)** 在 SDE 完成核心模組後開始：撰寫測試腳本並模擬 API 回傳異常的情境。
+4. **每個成員完成後必須通知成員 1 (Lead)**，由 Lead 進行最終彙整。
+
+**請以 Delegate Mode 執行，Lead 角色請開始分配任務並定義第一版的開發清單。**
